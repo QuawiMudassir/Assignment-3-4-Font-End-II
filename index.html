@@ -1,0 +1,118 @@
+<!--
+    Name: MOhammed Abdul Quawi Mudassir
+    ID: C0911573
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Race Simulation</title>
+    <style>
+        /* Styles for the race results section */
+        #race-results {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Car Race Simulation</h1>
+    <section id="race-results">
+        <table>
+            <thead>
+                <tr>
+                    <th>Turn</th>
+                    <th>Car</th>
+                    <th>Remaining Gas (Liters)</th>
+                </tr>
+            </thead>
+            <tbody id="race-results-body">
+                <!-- Race results will be displayed here -->
+            </tbody>
+        </table>
+    </section>
+
+    <script>
+        // Car class definition
+        class Car {
+            constructor(brand, model, year, color, price, gas) {
+                this.brand = brand;
+                this.model = model;
+                this.year = year;
+                this.color = color;
+                this.price = price;
+                this.gas = gas;
+            }
+
+            // Honk method
+            honk() {
+                console.log("Tuut tuut");
+                console.log(`Brand: ${this.brand}, Model: ${this.model}, Year: ${this.year}, Color: ${this.color}, Price: $${this.price}`);
+            }
+
+            // Method to simulate loss of gas after each turn
+            loseGas(currentYear) {
+                let loss = 5; // Base loss
+
+                // If the car is not from the current year, calculate additional loss
+                if (this.year < currentYear) {
+                    const yearsDifference = currentYear - this.year;
+                    loss += yearsDifference; // Increase loss by the difference in years
+                }
+
+                this.gas -= loss; // Subtract loss from gas
+
+                // Ensure gas does not go below zero
+                this.gas = Math.max(this.gas, 0);
+            }
+        }
+
+        // Create car objects
+        const honda = new Car("Honda", "CR-V", 2023, "Red", 50000, 45);
+        const ford = new Car("Ford", "F-150", 2020, "Black", 25000, 30);
+        const bmw = new Car("BMW", "X5", 2022, "Green", 60000, 65);
+        const mazda = new Car("Mazda", "CX-5", 2019, "White", 15000, 60);
+        const audi = new Car("Audi", "Q7", 2018, "Silver", 52000, 47);
+        const kia = new Car("Kia", "Forte", 2020, "Blue", 21000, 56);
+
+        // Array to hold all car objects
+        const cars = [honda, ford, bmw, mazda, audi, kia];
+
+        // Simulate race for 7 turns
+        const currentYear = new Date().getFullYear(); // Get current year
+        const raceResultsBody = document.getElementById("race-results-body");
+
+        // Populate table with race results
+        for (let i = 1; i <= 7; i++) {
+            const turnResults = document.createElement("tr");
+            turnResults.innerHTML = `<td>Turn ${i}</td>`;
+
+            cars.forEach(car => {
+                car.loseGas(currentYear); // Simulate gas loss
+                turnResults.innerHTML += `<td>${car.brand} ${car.model}</td><td>${car.gas}</td>`;
+            });
+
+            raceResultsBody.appendChild(turnResults);
+        }
+    </script>
+</body>
+</html>
