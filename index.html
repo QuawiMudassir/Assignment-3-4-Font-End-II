@@ -1,6 +1,7 @@
 <!--
     Name: MOhammed Abdul Quawi Mudassir
     ID: C0911573
+    Assignment 3-4
 -->
 
 <!DOCTYPE html>
@@ -9,110 +10,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Race Simulation</title>
-    <style>
-        /* Styles for the race results section */
-        #race-results {
-            margin-top: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">    
 </head>
 <body>
     <h1>Car Race Simulation</h1>
-    <section id="race-results">
-        <table>
-            <thead>
-                <tr>
-                    <th>Turn</th>
-                    <th>Car</th>
-                    <th>Remaining Gas (Liters)</th>
-                </tr>
-            </thead>
-            <tbody id="race-results-body">
-                <!-- Race results will be displayed here -->
-            </tbody>
-        </table>
-    </section>
+    <section id="race-results"></section>
 
-    <script>
-        // Car class definition
-        class Car {
-            constructor(brand, model, year, color, price, gas) {
-                this.brand = brand;
-                this.model = model;
-                this.year = year;
-                this.color = color;
-                this.price = price;
-                this.gas = gas;
-            }
+    <script> 
 
-            // Honk method
-            honk() {
-                console.log("Tuut tuut");
-                console.log(`Brand: ${this.brand}, Model: ${this.model}, Year: ${this.year}, Color: ${this.color}, Price: $${this.price}`);
-            }
+            // Car class definition
+class Car {
+    constructor(brand, model, year, color, price, gas) {
+        this.brand = brand;
+        this.model = model;
+        this.year = year;
+        this.color = color;
+        this.price = price;
+        this.gas = gas;
+    }
 
-            // Method to simulate loss of gas after each turn
-            loseGas(currentYear) {
-                let loss = 5; // Base loss
+    // Method to simulate loss of gas after each turn
+    loseGas(currentYear) {
+        let loss = 5; // Base loss
 
-                // If the car is not from the current year, calculate additional loss
-                if (this.year < currentYear) {
-                    const yearsDifference = currentYear - this.year;
-                    loss += yearsDifference; // Increase loss by the difference in years
-                }
-
-                this.gas -= loss; // Subtract loss from gas
-
-                // Ensure gas does not go below zero
-                this.gas = Math.max(this.gas, 0);
-            }
+        // If the car is not from the current year, calculate additional loss
+        if (this.year < currentYear) {
+            const yearsDifference = currentYear - this.year;
+            loss += yearsDifference; // Increase loss by the difference in years
         }
 
-        // Create car objects
-        const honda = new Car("Honda", "CR-V", 2023, "Red", 50000, 45);
-        const ford = new Car("Ford", "F-150", 2020, "Black", 25000, 30);
-        const bmw = new Car("BMW", "X5", 2022, "Green", 60000, 65);
-        const mazda = new Car("Mazda", "CX-5", 2019, "White", 15000, 60);
-        const audi = new Car("Audi", "Q7", 2018, "Silver", 52000, 47);
-        const kia = new Car("Kia", "Forte", 2020, "Blue", 21000, 56);
+        this.gas -= loss; // Subtract loss from gas
 
-        // Array to hold all car objects
-        const cars = [honda, ford, bmw, mazda, audi, kia];
+        // Ensure gas does not go below zero
+        this.gas = Math.max(this.gas, 0);
+    }
+}
 
-        // Simulate race for 7 turns
-        const currentYear = new Date().getFullYear(); // Get current year
-        const raceResultsBody = document.getElementById("race-results-body");
+// Create car objects
+const honda = new Car("Honda", "CR-V", 2023, "Red", 50000, 45);
+const ford = new Car("Ford", "F-150", 2020, "Black", 25000, 30);
+const bmw = new Car("BMW", "X5", 2022, "Green", 60000, 65);
+const mazda = new Car("Mazda", "CX-5", 2019, "White", 15000, 60);
+const audi = new Car("Audi", "Q7", 2018, "Silver", 52000, 47);
+const kia = new Car("Kia", "Forte", 2020, "Blue", 21000, 56);
 
-        // Populate table with race results
-        for (let i = 1; i <= 7; i++) {
-            const turnResults = document.createElement("tr");
-            turnResults.innerHTML = `<td>Turn ${i}</td>`;
+// Change the order of cars
+const cars = [kia, audi, mazda, bmw, ford, honda];
 
-            cars.forEach(car => {
-                car.loseGas(currentYear); // Simulate gas loss
-                turnResults.innerHTML += `<td>${car.brand} ${car.model}</td><td>${car.gas}</td>`;
-            });
+// Function to display race results
+function displayRaceResults(turnNumber, cars) {
+    const raceResults = document.getElementById("race-results");
+    // Create turn number element
+    const turnNumberElement = document.createElement("div");
+    turnNumberElement.classList.add("turn-number");
+    turnNumberElement.textContent = `Turn ${turnNumber}`;
+    raceResults.appendChild(turnNumberElement);
 
-            raceResultsBody.appendChild(turnResults);
+    // Create table
+    const table = document.createElement("table");
+
+    // Create table header
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+    headerRow.innerHTML = "<th>Car</th><th>Gas Remaining (Liters)</th>";
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create table body
+    const tbody = document.createElement("tbody");
+
+    cars.forEach(car => {
+        car.loseGas(new Date().getFullYear()); // Simulate gas loss
+        const row = document.createElement("tr");
+        row.innerHTML = `<td>${car.brand} ${car.model}</td><td>${car.gas}</td>`;
+        if (car.gas === 0) {
+            row.classList.add("zero-gas"); // Apply zero-gas class for zero gas
         }
+        tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    raceResults.appendChild(table);
+}
+
+// Function to determine the winner
+function determineWinner(cars) {
+    let winner = cars[0];
+    cars.forEach(car => {
+        if (car.gas > winner.gas) {
+            winner = car;
+        }
+    });
+    return winner;
+}
+
+// Function to start the race
+function startRace() {
+    // Loop through each turn
+    for (let i = 1; i <= 7; i++) {
+        setTimeout(() => {
+            const raceResults = document.getElementById("race-results");
+            raceResults.innerHTML = ""; // Clear previous results
+            displayRaceResults(i, cars);
+        }, i * 1000); // Delay each turn by 1 second
+    }
+
+    // After all turns, display the winner and keep the car details on the webpage
+    setTimeout(() => {
+        const raceResults = document.getElementById("race-results");
+        const winner = determineWinner(cars);
+        raceResults.innerHTML = ""; // Clear previous results
+        displayRaceResults(7, cars);
+        const winnerMessage = document.createElement("p");
+        winnerMessage.classList.add("winner");
+        winnerMessage.textContent = `Winner: ${winner.brand} ${winner.model}`;
+        raceResults.appendChild(winnerMessage);
+    }, 8000); // Delay displaying winner by 8 seconds (7 turns * 1 second delay + additional delay)
+}
+
+// Start the race when the page loads
+startRace();
+
+        
     </script>
 </body>
 </html>
